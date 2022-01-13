@@ -1,0 +1,36 @@
+:root {
+    --background-color: #06038D;
+    --font-color: white; 
+}
+
+header {
+    padding: 5%;
+    background-color: var(--background-color);
+    color: var(--font-color);
+    text-align: center;
+}
+
+section {
+    margin: 2% 2% 1%;
+}
+
+#time {
+    text-align: right;
+    visibility: hidden;
+}
+
+h2 {
+    padding: 2% auto;
+}
+
+button {
+    padding: 1% 2%;
+    background-color: var(--background-color);
+    color: var(--font-color);
+    border-radius: 10px;
+    margin: 2%;
+}
+
+.center {
+    text-align: center;
+}
