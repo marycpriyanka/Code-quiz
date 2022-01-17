@@ -14,14 +14,20 @@ let answer = "";
 let selectedChoice = "";
 let score = 0;
 let initials = "";
+// Time left for test
+let secondsLeft = totalQuestions * 10;
 // Gets the high score from the local storage
-let highScore = localStorage.getItem("highScore") || 0;
+let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+let scoreList = [];
+let highScore = 0;
+// Interval variable
+let timer;
 
 let resultParagraph;
 let buttonDiv;
 
 let timerSection = document.getElementById("time");
-let timer = document.getElementById("timer");
+let timerElement = document.getElementById("timer");
 let containerSection = document.getElementById("container");
 
 // Saves the initial html content of container section
@@ -34,7 +40,10 @@ document.getElementById("start").addEventListener("click", startQuiz);
 function startQuiz() {
     clearContainer();
     displayQuestion();
+    // Shows the timer
     timerSection.style.visibility = "visible";
+    // Sets the content of timer element as the sconds left
+    timerElement.textContent = secondsLeft;
     startTimer();
 }
 
@@ -112,12 +121,24 @@ function selectOption(event) {
     selectedChoice = event.target.value;
 }
 
+// Starts the timer
 function startTimer() {
+    timer = setInterval(function () {
+        secondsLeft--;
+        timerElement.textContent = secondsLeft;
 
+        // If seconds left reaches 0 or less, it stops the timer and completes the test.
+        if (secondsLeft <= 0) {
+            stopTimer();
+            clearContainer();
+            finishTest();
+        }
+    }, 1000);
 }
 
+// Clears the timer.
 function stopTimer() {
-
+    clearInterval(timer);
 }
 
 function checkAnswer() {
@@ -133,6 +154,7 @@ function checkAnswer() {
     }
     else {
         result = "Wrong answer";
+        secondsLeft -= 5;
     }
 
     // Displays the result.
@@ -184,7 +206,7 @@ function nextQuestion() {
     selectedChoice = "";
     clearContainer();
 
-    if (currentQuestionNumber < questions.length) {
+    if (currentQuestionNumber < questions.length && secondsLeft > 0) {
         displayQuestion();
     }
     else {
@@ -195,7 +217,7 @@ function nextQuestion() {
 }
 
 // Completes the exam and shows the scores.
-function finishTest() {
+function finishTest() {    
     // Displays that the test is done
     let title = document.createElement("h2");
     title.textContent = "All done!";
@@ -237,9 +259,11 @@ function getInitials(event) {
 function checkHighScore() {
     let isHighScore = false;
 
-    if (score >= highScore) {
-        highScore = score;
-        isHighScore = true;
+    for (let i = 0; i < highScores.length; i++) {
+        if (score >= highScores[i].highScore) {
+            highScore = score;
+            isHighScore = true;
+        }
     }
 
     return isHighScore;
@@ -248,15 +272,30 @@ function checkHighScore() {
 // Event handler for submit button.
 // This sets and displays the high score
 function submit() {
+    if (!initials) {
+        return;
+    }
     // If current score is the high score, then set the local storage
     if (checkHighScore()) {
-        if(!initials)
-        {
-            return;
+        let object = {
+            name: initials,
+            highScore: highScore
+        };
+        scoreList.push(object);
+
+        if (scoreList.length > 3) {
+            let leastScore = scoreList.reduce((previousValue, currentValue) => {
+                return previousValue.score < currentValue.score ? previousValue : currentValue;
+            });
+
+
         }
-        localStorage.setItem("name", initials);
-        localStorage.setItem("highScore", highScore);
+
+        localStorage.setItem("highScores", JSON.stringify(scoreList));
     }
+
+    // Hides the timer section
+    timerSection.style.visibility = "hidden";
 
     // Displays the high score
     clearContainer();
@@ -271,7 +310,7 @@ function displayHighScores() {
 
     let highScoreDetails = document.createElement("p");
     highScoreDetails.textContent = localStorage.getItem("name") + ": " + localStorage.getItem("highScore");
-    let style = getComputedStyle(document.body);  
+    let style = getComputedStyle(document.body);
     highScoreDetails.style.color = style.getPropertyValue("--background-color");
     containerSection.appendChild(highScoreDetails);
 
@@ -291,6 +330,6 @@ function takeTestAgain() {
     document.getElementById("start").addEventListener("click", startQuiz);
 
     score = 0;
-    currentQuestionNumber = 0;  
+    currentQuestionNumber = 0;
+    secondsLeft = totalQuestions * 10;
 }
- 
