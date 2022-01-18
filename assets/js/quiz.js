@@ -343,4 +343,5 @@ function takeTestAgain() {
     score = 0;
     currentQuestionNumber = 0;
     secondsLeft = totalQuestions * 10;
+    initials = "";
 }
