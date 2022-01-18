@@ -1,25 +1,39 @@
 /*
  * questions.js is loaded in the HTML before quiz.js
  * It creates a global variable called questions that contains starter questions.
+ * 
  * Take a look at the structure and familiarize yourself with each part
  * then, add some of your own questions!
  * Use this data to populate your quiz questions, choices, and answers.
  */
 
+// Total questions in quiz
 let totalQuestions = questions.length;
+//The current question number
 let currentQuestionNumber = 0;
+// Current question
 let question = "";
+// Multiple choices of current question
 let choices = [];
+// The correct answer of current question
 let answer = "";
+// User selected choice
 let selectedChoice = "";
+
+// The score
 let score = 0;
+// Initials entered by user
 let initials = "";
+
 // Time left for test
 let secondsLeft = totalQuestions * 10;
-// Gets the high score from the local storage
+
+// The number of high scores to be shown. This variable could be changed here kif needed
+let numberOfHighScores = 3;
+
+// Gets the high score list from the local storage
 let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
-let scoreList = [];
-let highScore = 0;
+
 // Interval variable
 let timer;
 
@@ -255,44 +269,30 @@ function getInitials(event) {
     initials = event.target.value;
 }
 
-// Checks if the current score is the highest score
-function checkHighScore() {
-    let isHighScore = false;
-
-    for (let i = 0; i < highScores.length; i++) {
-        if (score >= highScores[i].highScore) {
-            highScore = score;
-            isHighScore = true;
-        }
-    }
-
-    return isHighScore;
-}
-
 // Event handler for submit button.
 // This sets and displays the high score
 function submit() {
     if (!initials) {
         return;
     }
+
     // If current score is the high score, then set the local storage
-    if (checkHighScore()) {
-        let object = {
-            name: initials,
-            highScore: highScore
-        };
-        scoreList.push(object);
-
-        if (scoreList.length > 3) {
-            let leastScore = scoreList.reduce((previousValue, currentValue) => {
-                return previousValue.score < currentValue.score ? previousValue : currentValue;
-            });
-
-
-        }
-
-        localStorage.setItem("highScores", JSON.stringify(scoreList));
+    if (highScores.length < numberOfHighScores)
+    {
+        addToHighScoreList();
     }
+    else {
+        // Sort the score list in descending order.
+        highScores.sort((a,b) => b.highScore - a.highScore);
+        if (highScores[highScores.length - 1].highScore <= score)
+        {
+            highScores.pop();
+            addToHighScoreList();
+        }
+    }
+
+    // Stores the high scores in local storage
+    localStorage.setItem("highScores", JSON.stringify(highScores));
 
     // Hides the timer section
     timerSection.style.visibility = "hidden";
@@ -302,17 +302,28 @@ function submit() {
     displayHighScores();
 }
 
+function addToHighScoreList() {
+    let object = {
+        name: initials,
+        highScore: score
+    };
+    highScores.push(object);
+}
+
 // Displays the high scores
 function displayHighScores() {
     let title = document.createElement("h2");
     title.textContent = "High scores";
     containerSection.appendChild(title);
 
-    let highScoreDetails = document.createElement("p");
-    highScoreDetails.textContent = localStorage.getItem("name") + ": " + localStorage.getItem("highScore");
-    let style = getComputedStyle(document.body);
-    highScoreDetails.style.color = style.getPropertyValue("--background-color");
-    containerSection.appendChild(highScoreDetails);
+    // Adds a list of high scores
+    let list = document.createElement("ol");
+    for (let i = 0; i < highScores.length; i++) {
+        let listItem = document.createElement("li");
+        listItem.textContent = highScores[i].name + ": " + highScores[i].highScore;
+        list.appendChild(listItem);
+    }
+    containerSection.appendChild(list);
 
     let backbutton = document.createElement("button");
     backbutton.textContent = "Take test again";
