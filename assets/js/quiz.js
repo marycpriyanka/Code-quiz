@@ -30,7 +30,7 @@ let secondsLeft = totalQuestions * 10;
 // The number of high scores to be shown. This variable could be changed here if needed
 let numberOfHighScores = 3;
 // Time to be subtracted if user enters wrong answer to any question
-timeSubtractedIfWrongAnswer
+let timeSubtractedIfWrongAnswer = 5;
 
 // Gets the high score list from the local storage
 let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
