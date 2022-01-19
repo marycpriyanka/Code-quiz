@@ -27,9 +27,10 @@ let initials = "";
 
 // Time left for test
 let secondsLeft = totalQuestions * 10;
-
-// The number of high scores to be shown. This variable could be changed here kif needed
+// The number of high scores to be shown. This variable could be changed here if needed
 let numberOfHighScores = 3;
+// Time to be subtracted if user enters wrong answer to any question
+timeSubtractedIfWrongAnswer
 
 // Gets the high score list from the local storage
 let highScores = JSON.parse(localStorage.getItem("highScores")) || [];
@@ -168,7 +169,7 @@ function checkAnswer() {
     }
     else {
         result = "Wrong answer";
-        secondsLeft -= 5;
+        secondsLeft -= timeSubtractedIfWrongAnswer;
     }
 
     // Displays the result.
