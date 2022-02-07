@@ -17,8 +17,14 @@ Code quiz is a timed coding quiz with multiple choice questions. It stores the h
 ![Test completed](https://github.com/marycpriyanka/Code-quiz/blob/main/assets/images/screenshots/screenshot4.JPG)
 ![High scores](https://github.com/marycpriyanka/Code-quiz/blob/main/assets/images/screenshots/screenshot5.JPG)
 
+## Technologies used
+HTML, CSS, JavaScript
+
 ## Deployed link
 https://marycpriyanka.github.io/Code-quiz/
 
 ## Future Contributions
 We could add more questions in question.js file to the global variable called questions.
+
+### Contact
+marycpriyanka@gmail.com
